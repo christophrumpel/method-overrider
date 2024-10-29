@@ -5,4 +5,5 @@
         <a href="https://packagist.org/packages/christophrumpel/method-overrider"><img alt="License" src="https://img.shields.io/packagist/l/christophrumpel/method-overrider"></a>
     </p>
 ------
+
 PHP Method Overrider
