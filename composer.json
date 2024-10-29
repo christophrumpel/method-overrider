@@ -1,12 +1,12 @@
 {
-    "name": "nunomaduro/skeleton-php",
-    "description": "A skeleton repository for my packages",
-    "keywords": ["php", "skeleton", "package"],
+    "name": "christophrumpel/method-overrider",
+    "description": "A PHP package to override methods.",
+    "keywords": ["php", "overriding", "methods"],
     "license": "MIT",
     "authors": [
         {
-            "name": "Nuno Maduro",
-            "email": "enunomaduro@gmail.com"
+            "name": "Christoph Rumpel",
+            "email": "christoph@christoph-rumpel.com"
         }
     ],
     "require": {
@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "NunoMaduro\\SkeletonPhp\\": "src/"
+            "ChristophRumpel\\MethodOverrider\\": "src/"
         }
     },
     "autoload-dev": {
