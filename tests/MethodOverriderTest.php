@@ -42,6 +42,19 @@ it('overrides a method of a class', function (): void {
     expect($class->getOne())->toBe(2);
 });
 
+it('overrides a method with arguments of a class', function (): void {
+    // Act
+    $methodOverrider = new MethodOverrider;
+    $class = $methodOverrider->override(
+        class: RandomIntService::class,
+        methodNames: 'get',
+        implementations: fn (callable $original): int|float => $original() + 5
+    );
+
+    // Assert
+    expect($class->get(1))->toBe(6);
+});
+
 it('overrides two methods of a class', function (): void {
     // Act
     $methodOverrider = new MethodOverrider;

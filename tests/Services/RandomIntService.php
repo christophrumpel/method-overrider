@@ -13,4 +13,9 @@ class RandomIntService
     {
         return 2;
     }
+
+    public function get(int $number): int
+    {
+        return $number;
+    }
 }
