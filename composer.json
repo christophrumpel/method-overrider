@@ -1,7 +1,11 @@
 {
     "name": "christophrumpel/method-overrider",
     "description": "A PHP package to override methods.",
-    "keywords": ["php", "overriding", "methods"],
+    "keywords": [
+        "php",
+        "overriding",
+        "methods"
+    ],
     "license": "MIT",
     "authors": [
         {
@@ -41,14 +45,14 @@
     },
     "scripts": {
         "refacto": "rector",
-        "lint": "pint",
+        "pint": "pint",
         "test:refacto": "rector --dry-run",
         "test:lint": "pint --test",
         "test:types": "phpstan analyse --ansi",
-        "test:unit": "pest --colors=always --coverage --parallel --min=100",
+        "test:unit": "pest --colors=always --parallel --min=100",
         "test": [
             "@test:refacto",
-            "@test:lint",
+            "@test:pint",
             "@test:types",
             "@test:unit"
         ]
