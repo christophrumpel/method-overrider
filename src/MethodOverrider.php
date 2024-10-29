@@ -7,11 +7,10 @@ use ReflectionMethod;
 class MethodOverrider
 {
     public function override(
-        string   $class,
-        string   $methodName,
+        string $class,
+        string $methodName,
         callable $implementation
-    ): object|false
-    {
+    ): object|false {
         if (! class_exists($class) || ! method_exists($class, $methodName)) {
             return false;
         }
