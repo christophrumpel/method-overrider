@@ -8,4 +8,9 @@ class RandomIntService
     {
         return 1;
     }
+
+    public function getTwo(): int
+    {
+        return 2;
+    }
 }
