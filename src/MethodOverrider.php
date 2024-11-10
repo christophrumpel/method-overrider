@@ -8,14 +8,16 @@ use ReflectionParameter;
 class MethodOverrider
 {
     /**
-     * @param  string|array<int, string>  $methodNames
-     * @param  callable|array<int, callable>  $implementations
+     * @param string|array<int, string> $methodNames
+     * @param callable|array<int, callable> $implementations
      */
     public function override(
-        string $class,
-        string|array $methodNames,
-        callable|array $implementations
-    ): object|false {
+        string         $class,
+        string|array   $methodNames,
+        callable|array $implementations,
+        bool           $returnString = false
+    ): object|string|false
+    {
         $methods = is_array($methodNames) ? $methodNames : [$methodNames];
         $implementations = is_array($implementations) ? $implementations : [$implementations];
 
@@ -46,11 +48,15 @@ class MethodOverrider
     }
 EOT;
 
+        if ($returnString) {
+            return $classDefinition;
+        }
+
         return eval("return $classDefinition;");
     }
 
     /**
-     * @param  array<int, string>  $methods
+     * @param array<int, string> $methods
      */
     private function allMethodsExist(string $class, array $methods): bool
     {
@@ -64,7 +70,7 @@ EOT;
     }
 
     /**
-     * @param  array<int, string>  $methods
+     * @param array<int, string> $methods
      */
     private function buildMethodDefinitions(string $class, array $methods): string
     {
@@ -111,7 +117,7 @@ EOT;
     }
 
     /**
-     * @param  ReflectionParameter[]  $parameters
+     * @param ReflectionParameter[] $parameters
      */
     private function buildParameterList(array $parameters): string
     {
@@ -131,7 +137,7 @@ EOT;
             if ($hasDefault) {
                 $default = $param->getDefaultValue();
                 $defaultStr = is_string($default) ? "'$default'" : $default;
-                $paramStr .= ' = '.var_export($defaultStr, true);
+                $paramStr .= ' = ' . var_export($defaultStr, true);
             } elseif ($isOptional) {
                 $paramStr .= ' = null';
             }
@@ -141,7 +147,7 @@ EOT;
     }
 
     /**
-     * @param  ReflectionParameter[]  $parameters
+     * @param ReflectionParameter[] $parameters
      */
     private function buildParameterNames(array $parameters): string
     {
@@ -149,6 +155,6 @@ EOT;
             return '';
         }
 
-        return implode(', ', array_map(fn(ReflectionParameter $param): string => '$'.$param->getName(), $parameters));
+        return implode(', ', array_map(fn(ReflectionParameter $param): string => '$' . $param->getName(), $parameters));
     }
 }

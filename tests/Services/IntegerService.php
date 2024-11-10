@@ -2,7 +2,7 @@
 
 namespace Tests\Services;
 
-class RandomIntService
+class IntegerService
 {
     public function getOne(): int
     {
