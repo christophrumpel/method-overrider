@@ -74,23 +74,35 @@ it('overrides two methods of a class', function (): void {
     expect($class->getTwo())->toBe(3);
 });
 
-it('can give you just the string content of the new class', function (): void {
+it('can generate a class file with its implementations', function (): void {
     // Arrange
     $methodOverrider = new MethodOverrider;
+    $implementation = fn(callable $original): int => $original() + 1;
 
     // Act
-    $classDefinition = $methodOverrider->override(
+    $result = $methodOverrider->generateOverriddenClass(
         class: IntegerService::class,
         methodNames: 'getOne',
-        implementations: fn(callable $original): int|float => $original() + 1,
-        returnString: true
+        implementations: $implementation
     );
 
-    // Assert
-    expect($classDefinition)->toBeString();
-    expect($classDefinition)->toContain('new class');
-    expect($classDefinition)->toContain('extends \Tests\Services\IntegerService');
-    expect($classDefinition)->toContain('private array $implementations');
-    expect($classDefinition)->toContain('public function __construct(array $implementations)');
-    expect($classDefinition)->toContain('public function getOne()');
+    // Assert structure
+    expect($result)
+        ->toBeArray()
+        ->toHaveKeys(['content', 'implementations', 'className']);
+
+    // Assert instance
+    $tempFile = sys_get_temp_dir() . '/test_class_' . uniqid() . '.php';
+    file_put_contents($tempFile, $result['content']);
+
+    require $tempFile;
+    $className = $result['className'];
+    $instance = new $className($result['implementations']);
+    unlink($tempFile);
+
+    expect($instance)
+        ->toBeObject()
+        ->toBeInstanceOf(IntegerService::class)
+        ->and($instance->getOne())
+        ->toBe(2);
 });

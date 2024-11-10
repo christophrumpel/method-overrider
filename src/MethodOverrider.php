@@ -2,6 +2,7 @@
 
 namespace ChristophRumpel\MethodOverrider;
 
+use InvalidArgumentException;
 use ReflectionMethod;
 use ReflectionParameter;
 
@@ -15,7 +16,7 @@ class MethodOverrider
         string         $class,
         string|array   $methodNames,
         callable|array $implementations,
-        bool           $returnString = false
+        bool           $returnNewClassString = false
     ): object|string|false
     {
         $methods = is_array($methodNames) ? $methodNames : [$methodNames];
@@ -47,10 +48,6 @@ class MethodOverrider
         $methodDefinitions
     }
 EOT;
-
-        if ($returnString) {
-            return $classDefinition;
-        }
 
         return eval("return $classDefinition;");
     }
@@ -157,4 +154,50 @@ EOT;
 
         return implode(', ', array_map(fn(ReflectionParameter $param): string => '$' . $param->getName(), $parameters));
     }
+
+    public function generateOverriddenClass(
+        string         $class,
+        string|array   $methodNames,
+        callable|array $implementations,
+    ): array
+    {
+        $methods = is_array($methodNames) ? $methodNames : [$methodNames];
+        $implementations = is_array($implementations) ? $implementations : [$implementations];
+
+        if (! class_exists($class)) {
+            throw new InvalidArgumentException('Class does not exist');
+        }
+
+        if (! $this->allMethodsExist($class, $methods)) {
+            throw new InvalidArgumentException('Method does not exist');
+        }
+
+        if (count($methods) !== count($implementations)) {
+            throw new InvalidArgumentException('Number of methods and implementations must match');
+        }
+
+        $newClassName = basename(str_replace('\\', '/', $class)) . 'CacheProxy';
+        $methodDefinitions = $this->buildMethodDefinitions($class, $methods);
+
+        return [
+            'content' => <<<EOT
+<?php
+
+class {$newClassName} extends \\{$class}
+{
+    private array \$implementations;
+
+    public function __construct(array \$implementations)
+    {
+        \$this->implementations = \$implementations;
+    }
+
+    {$methodDefinitions}
+}
+EOT,
+            'implementations' => $implementations,
+            'className' => $newClassName,
+        ];
+    }
+
 }
