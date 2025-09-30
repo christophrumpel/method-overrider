@@ -9,16 +9,15 @@ use ReflectionParameter;
 class MethodOverrider
 {
     /**
-     * @param string|array<int, string> $methodNames
-     * @param callable|array<int, callable> $implementations
+     * @param  string|array<int, string>  $methodNames
+     * @param  callable|array<int, callable>  $implementations
      */
     public function override(
-        string         $class,
-        string|array   $methodNames,
+        string $class,
+        string|array $methodNames,
         callable|array $implementations,
-        bool           $returnNewClassString = false
-    ): object|string|false
-    {
+        bool $returnNewClassString = false
+    ): object|string|false {
         $methods = is_array($methodNames) ? $methodNames : [$methodNames];
         $implementations = is_array($implementations) ? $implementations : [$implementations];
 
@@ -53,7 +52,7 @@ EOT;
     }
 
     /**
-     * @param array<int, string> $methods
+     * @param  array<int, string>  $methods
      */
     private function allMethodsExist(string $class, array $methods): bool
     {
@@ -67,7 +66,7 @@ EOT;
     }
 
     /**
-     * @param array<int, string> $methods
+     * @param  array<int, string>  $methods
      */
     private function buildMethodDefinitions(string $class, array $methods): string
     {
@@ -114,7 +113,7 @@ EOT;
     }
 
     /**
-     * @param ReflectionParameter[] $parameters
+     * @param  ReflectionParameter[]  $parameters
      */
     private function buildParameterList(array $parameters): string
     {
@@ -134,7 +133,7 @@ EOT;
             if ($hasDefault) {
                 $default = $param->getDefaultValue();
                 $defaultStr = is_string($default) ? "'$default'" : $default;
-                $paramStr .= ' = ' . var_export($defaultStr, true);
+                $paramStr .= ' = '.var_export($defaultStr, true);
             } elseif ($isOptional) {
                 $paramStr .= ' = null';
             }
@@ -144,7 +143,7 @@ EOT;
     }
 
     /**
-     * @param ReflectionParameter[] $parameters
+     * @param  ReflectionParameter[]  $parameters
      */
     private function buildParameterNames(array $parameters): string
     {
@@ -152,15 +151,14 @@ EOT;
             return '';
         }
 
-        return implode(', ', array_map(fn(ReflectionParameter $param): string => '$' . $param->getName(), $parameters));
+        return implode(', ', array_map(fn (ReflectionParameter $param): string => '$'.$param->getName(), $parameters));
     }
 
     public function generateOverriddenClass(
-        string         $class,
-        string|array   $methodNames,
+        string $class,
+        string|array $methodNames,
         callable|array $implementations,
-    ): array
-    {
+    ): array {
         $methods = is_array($methodNames) ? $methodNames : [$methodNames];
         $implementations = is_array($implementations) ? $implementations : [$implementations];
 
@@ -176,7 +174,7 @@ EOT;
             throw new InvalidArgumentException('Number of methods and implementations must match');
         }
 
-        $newClassName = basename(str_replace('\\', '/', $class)) . 'CacheProxy';
+        $newClassName = basename(str_replace('\\', '/', $class)).'CacheProxy';
         $methodDefinitions = $this->buildMethodDefinitions($class, $methods);
 
         return [
@@ -199,5 +197,4 @@ EOT,
             'className' => $newClassName,
         ];
     }
-
 }

@@ -9,8 +9,7 @@ it('returns false if class does not exist', function (): void {
     $result = $methodOverrider->override(
         class: 'NonExistingClass',
         methodNames: 'nonExistingMethod',
-        implementations: function (): void {
-        }
+        implementations: function (): void {}
     );
 
     // Assert
@@ -23,8 +22,7 @@ it('returns false if method does not exists', function (): void {
     $result = $methodOverrider->override(
         class: IntegerService::class,
         methodNames: 'nonExistingMethod',
-        implementations: function (): void {
-        }
+        implementations: function (): void {}
     );
 
     // Assert
@@ -37,7 +35,7 @@ it('overrides a method of a class', function (): void {
     $class = $methodOverrider->override(
         class: IntegerService::class,
         methodNames: 'getOne',
-        implementations: fn(callable $original): int => $original() + 1
+        implementations: fn (callable $original): int => $original() + 1
     );
 
     // Assert
@@ -50,7 +48,7 @@ it('overrides a method with arguments of a class', function (): void {
     $class = $methodOverrider->override(
         class: IntegerService::class,
         methodNames: 'get',
-        implementations: fn(callable $original): int|float => $original() + 5
+        implementations: fn (callable $original): int|float => $original() + 5
     );
 
     // Assert
@@ -64,8 +62,8 @@ it('overrides two methods of a class', function (): void {
         class: IntegerService::class,
         methodNames: ['getOne', 'getTwo'],
         implementations: [
-            fn(callable $original): int|float => $original() + 1,
-            fn(callable $original): int|float => $original() + 1,
+            fn (callable $original): int|float => $original() + 1,
+            fn (callable $original): int|float => $original() + 1,
         ]
     );
 
@@ -77,7 +75,7 @@ it('overrides two methods of a class', function (): void {
 it('can generate a class file with its implementations', function (): void {
     // Arrange
     $methodOverrider = new MethodOverrider;
-    $implementation = fn(callable $original): int => $original() + 1;
+    $implementation = fn (callable $original): int => $original() + 1;
 
     // Act
     $result = $methodOverrider->generateOverriddenClass(
@@ -92,7 +90,7 @@ it('can generate a class file with its implementations', function (): void {
         ->toHaveKeys(['content', 'implementations', 'className']);
 
     // Assert instance
-    $tempFile = sys_get_temp_dir() . '/test_class_' . uniqid() . '.php';
+    $tempFile = sys_get_temp_dir().'/test_class_'.uniqid().'.php';
     file_put_contents($tempFile, $result['content']);
 
     require $tempFile;
