@@ -154,6 +154,11 @@ EOT;
         return implode(', ', array_map(fn (ReflectionParameter $param): string => '$'.$param->getName(), $parameters));
     }
 
+    /**
+     * @param  string|array<int, string>  $methodNames
+     * @param  callable|array<int, callable>  $implementations
+     * @return array<string, mixed>
+     */
     public function generateOverriddenClass(
         string $class,
         string|array $methodNames,
